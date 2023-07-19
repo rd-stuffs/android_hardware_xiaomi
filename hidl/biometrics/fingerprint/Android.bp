@@ -32,6 +32,11 @@ cc_binary {
     ],
 
     header_libs: ["xiaomifingerprint_headers"],
+
+    lto: {
+        thin: true,
+    },
+    whole_program_vtables: true,
 }
 
 cc_library_headers {
