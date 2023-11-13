@@ -114,12 +114,9 @@ void Lights::setLED(const HwLightState& state) {
             if (mWhiteLED) {
                 rc = kLEDs[WHITE].setBreath(state, color.toBrightness());
             } else {
-                if (!!color.red)
-                    rc &= kLEDs[RED].setBreath(state, color.red);
-                if (!!color.green)
-                    rc &= kLEDs[GREEN].setBreath(state, color.green);
-                if (!!color.blue)
-                    rc &= kLEDs[BLUE].setBreath(state, color.blue);
+                rc = kLEDs[RED].setBreath(state, color.red);
+                rc &= kLEDs[GREEN].setBreath(state, color.green);
+                rc &= kLEDs[BLUE].setBreath(state, color.blue);
             }
             if (rc)
                 break;
