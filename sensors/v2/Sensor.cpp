@@ -227,7 +227,7 @@ SysfsPollingOneShotSensor::SysfsPollingOneShotSensor(
     mSensorInfo.flags |= SensorFlagBits::WAKE_UP;
 
     if (enablePath != "") {
-        mEnableStream.open(enablePath);
+        TryOpenStream(mEnableStream, enablePath);
     }
 
     int rc;
@@ -270,7 +270,7 @@ SysfsPollingOneShotSensor::~SysfsPollingOneShotSensor() {
 }
 
 void SysfsPollingOneShotSensor::writeEnable(bool enable) {
-    if (mEnableStream) {
+    if (mEnableStream.is_open()) {
         mEnableStream << (enable ? '1' : '0') << std::flush;
     }
 }
@@ -379,6 +379,27 @@ std::string GetPollPath(const char** array) {
   }
 
   return "";
+}
+
+void TryOpenStream(std::ofstream& mEnableStream, const std::string& enablePath) {
+    const int maxAttempts = 5;
+    int attempts = 0;
+
+    while (attempts < maxAttempts) {
+        mEnableStream.open(enablePath);
+        if (mEnableStream.is_open()) {
+            break;
+        } else {
+            ALOGE("Failed to open stream %s on attempt %d", enablePath.c_str(), attempts + 1);
+            mEnableStream.clear();
+            std::this_thread::sleep_for(std::chrono::seconds(1));
+            attempts++;
+        }
+    }
+
+    if (!mEnableStream.is_open()) {
+        ALOGE("Failed to open stream %s after %d attempts", enablePath.c_str(), attempts + 1);
+    }
 }
 
 }  // namespace implementation

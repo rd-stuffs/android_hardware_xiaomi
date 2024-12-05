@@ -43,6 +43,7 @@ namespace implementation {
 
 extern std::string GetPollPath(const char** array);
 extern bool IsFileValid(const std::string& file);
+extern void TryOpenStream(std::ofstream& mEnableStream, const std::string& enablePath);
 
 class ISensorsEventCallback {
   public:
